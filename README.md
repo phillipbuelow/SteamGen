@@ -1,2 +1,3 @@
 # SteamGen
- Dynamic Steam Generation System
+
+[![Build Status](https://github.com/phillipbuelow/SteamGen/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/phillipbuelow/SteamGen/actions/workflows/CI.yml?query=branch%3Amain)
