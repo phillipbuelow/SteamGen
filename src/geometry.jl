@@ -1,8 +1,6 @@
-using MAT
-using LinearAlgebra
 
 function geometry(d)
-    G = matread("G.mat")["G"]
+    G = JLD2.load("src/geometry_example.jld2")["G"]
     
     p = Dict{Symbol, Any}()
     sh = Dict{Symbol, Any}()
@@ -171,7 +169,3 @@ function geometry(d)
 
     return p, sh, rh, ev, ph, d
 end
-
-# Example of calling the function with a sample input
-d = Dict(:elbow => 0.5)  # replace with actual data
-p, sh, rh, ev, ph, d = geometry(d)

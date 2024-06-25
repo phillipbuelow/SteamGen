@@ -1,4 +1,6 @@
 @kwdef struct sh
+    G = JLD2.load("src/geometry_example.jld2")["G"]
+    
     N_tubes::Int64    = G[18, 4]             # [#] of tubes
     N_baffles::Int64  = G[34, 4]           # [#] of baffles
     L::Float64          = 2 * G[14, 4] + d[:elbow]   # [m] average tube length

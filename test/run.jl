@@ -1,32 +1,30 @@
 # Import necessary packages
-using Dates
-using LinearAlgebra
-using DifferentialEquations
-using Plots
+using SteamGen
+
+dates = ["01-10"]   # valid days
 
 # Simulation directives
-dates = ["01-10"] # valid days
 d = Dict(
     :day => dates[1],
     :start => 1,
-    :t_f => 80800, # duration
-    :stop => 80801, # start time + duration + 1
-    :step => 80800, # number of steps
-    :tspan => range(0, stop=80800, length=80800), # time vector
-    :L => 30, # length of p
+    :t_f => 80800,                                  # duration
+    :stop => 80801,                                 # start time + duration + 1
+    :step => 80800,                                 # number of steps
+    :tspan => range(0, stop=80800, length=80800),   # time vector
+    :L => 30,                                       # length of p
     :R_contact => 0,
-    :reduc => 1, # reduction of heat transfer coefficient on tubesheets
-    :elbow => 3.156, # length of elbow
-    :temp => 0, # run kelvin or celsius
-    :X => 0.3 # vapor fraction (quality)
+    :reduc => 1,                                    # reduction of heat transfer coefficient on tubesheets
+    :elbow => 3.156,                                # length of elbow
+    :temp => 0,                                     # run kelvin or celsius
+    :X => 0.3                                       # vapor fraction (quality)
 )
 
 # Plot directives
 pl = Dict(
-    :plots => true, # display any plots at all
-    :save => false, # save selected plots
-    :bcs => true, # display boundary conditions
-    :temps => true # display predicted temperature profiles
+    :plots => true,         # display any plots at all
+    :save => false,         # save selected plots
+    :bcs => true,           # display boundary conditions
+    :temps => true          # display predicted temperature profiles
 )
 
 # Placeholder functions for geometry, crescentdunesdata, setup, solvedTdt, errors, plotstoplot
