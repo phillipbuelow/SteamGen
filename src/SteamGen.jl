@@ -12,8 +12,17 @@ using MAT
 
 import Base: @kwdef
 
-## Systems, general
+## Generates globally used functions
 include("structs.jl")
 include("geometry.jl")
+include("data_processor.jl")
+include("setup.jl")
+include("setup_dTdt.jl")
+
+# Exportation of global functions 
+export geometry
+export assign_data
+export setup
+export solvedTdt
 
 end

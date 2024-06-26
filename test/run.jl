@@ -1,23 +1,25 @@
 # Import necessary packages
 using SteamGen
 
-dates = ["01-10"]   # valid days
+dates = ["yyyy_mm_dd"]   # example day
 
 # Simulation directives
-d = Dict(
-    :day => dates[1],
-    :start => 1,
-    :t_f => 80800,                                  # duration
-    :stop => 80801,                                 # start time + duration + 1
-    :step => 80800,                                 # number of steps
-    :tspan => range(0, stop=80800, length=80800),   # time vector
-    :L => 30,                                       # length of p
-    :R_contact => 0,
-    :reduc => 1,                                    # reduction of heat transfer coefficient on tubesheets
-    :elbow => 3.156,                                # length of elbow
-    :temp => 0,                                     # run kelvin or celsius
-    :X => 0.3                                       # vapor fraction (quality)
-)
+@kwdef struct directives
+    day::String = dates[1]
+    start::Int64 = 1
+    t_f::Int64 = 80800                                  # duration
+    stop::Int64 = 80801                                 # start time + duration + 1
+    step::Int64 = 80800                                 # number of steps
+    tspan::Vector{Float64} = range(0, stop=80800, length=80800)   # time vector
+    L::Float64 = 30.0                                       # length of p
+    R_contact::Float64 = 0.0
+    reduc::Float64 = 1.0                                    # reduction of heat transfer coefficient on tubesheets
+    elbow::Float64 = 3.156                                # length of elbow
+    temp::Float64 = 0.0                                     # run kelvin or celsius
+    X::Float64 = 0.3                                      # vapor fraction (quality)
+    T_offset::Float64 = 1.0
+end
+d = directives()
 
 # Plot directives
 pl = Dict(
@@ -28,51 +30,36 @@ pl = Dict(
 )
 
 # Placeholder functions for geometry, crescentdunesdata, setup, solvedTdt, errors, plotstoplot
-function geometry(d)
-    return (p, sh, rh, ev, ph, d)
-end
+p, sh, rh, ev, ph, d = geometry(d);
+sh, rh, ev, ph, d = assign_data(p, sh, rh, ev, ph, d)
+n, p, sh, rh, ev, ph, T_i, d = setup(p, sh, rh, ev, ph, d)
 
-function crescentdunesdata(p, sh, rh, ev, ph, d)
-    return (p, sh, rh, ev, ph, d)
-end
+[t,T] = ode15s(@(t,T) solvedTdt(T,t,n,p,sh,rh,ev,ph,d), d.tspan, T_i);
+# T, n, p, sh, rh, ev, ph, d = errors(T, n, p, sh, rh, ev, ph, d)
 
-function setup(p, sh, rh, ev, ph, d)
-    return (n, p, sh, rh, ev, ph, ts, T_i, d)
-end
+# T, t, n, p, sh, rh, ev, ph, d, pl = plotstoplot(T, t, n, p, sh, rh, ev, ph, d, pl)
 
-function solvedTdt(T, t, n, p, sh, rh, ev, ph, d)
-    # Define your ODE system here
-end
+# # Crescent dunes data
+# p, sh, rh, ev, ph, d = geometry(d)
+# p[:L] = d[:L]
+# sh[:R_contact] = d[:R_contact]
+# rh[:R_contact] = d[:R_contact]
+# ev[:R_contact] = d[:R_contact]
+# ph[:R_contact] = d[:R_contact]
 
-function errors(T, n, p, sh, rh, ev, ph, d)
-    return (T, n, p, sh, rh, ev, ph, d)
-end
+# (p, sh, rh, ev, ph, d) = crescentdunesdata(p, sh, rh, ev, ph, d)
 
-function plotstoplot(T, t, n, p, sh, rh, ev, ph, d, pl)
-    return (T, t, n, p, sh, rh, ev, ph, d, pl)
-end
+# # ODE setup
+# (n, p, sh, rh, ev, ph, ts, T_i, d) = setup(p, sh, rh, ev, ph, d)
+# prob = ODEProblem((t, T) -> solvedTdt(T, t, n, p, sh, rh, ev, ph, d), T_i, d[:tspan])
+# sol = solve(prob, Rodas5())
 
-# Crescent dunes data
-(p, sh, rh, ev, ph, d) = geometry(d)
-p[:L] = d[:L]
-sh[:R_contact] = d[:R_contact]
-rh[:R_contact] = d[:R_contact]
-ev[:R_contact] = d[:R_contact]
-ph[:R_contact] = d[:R_contact]
+# # Error
+# (T, n, p, sh, rh, ev, ph, d) = errors(sol.u, n, p, sh, rh, ev, ph, d)
 
-(p, sh, rh, ev, ph, d) = crescentdunesdata(p, sh, rh, ev, ph, d)
-
-# ODE setup
-(n, p, sh, rh, ev, ph, ts, T_i, d) = setup(p, sh, rh, ev, ph, d)
-prob = ODEProblem((t, T) -> solvedTdt(T, t, n, p, sh, rh, ev, ph, d), T_i, d[:tspan])
-sol = solve(prob, Rodas5())
-
-# Error
-(T, n, p, sh, rh, ev, ph, d) = errors(sol.u, n, p, sh, rh, ev, ph, d)
-
-# PLOTS
-if pl[:plots]
-    (T, t, n, p, sh, rh, ev, ph, d, pl) = plotstoplot(T, sol.t, n, p, sh, rh, ev, ph, d, pl)
-else
-    println("SPEED TEST BABY!!! BRRRRRRRR")
-end
+# # PLOTS
+# if pl[:plots]
+#     (T, t, n, p, sh, rh, ev, ph, d, pl) = plotstoplot(T, sol.t, n, p, sh, rh, ev, ph, d, pl)
+# else
+#     println("SPEED TEST BABY!!! BRRRRRRRR")
+# end

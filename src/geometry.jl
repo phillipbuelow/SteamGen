@@ -1,6 +1,6 @@
 
 function geometry(d)
-    G = JLD2.load("src/geometry_example.jld2")["G"]
+    G = JLD2.load("C:/Users/phill/.julia/dev/SteamGen/data/geometry/geo_example.jld2")["G"]
     
     p = Dict{Symbol, Any}()
     sh = Dict{Symbol, Any}()
@@ -25,7 +25,7 @@ function geometry(d)
     # Superheater geometry
     sh[:N_tubes] = G[18, 4]             # [#] of tubes
     sh[:N_baffles] = G[34, 4]           # [#] of baffles
-    sh[:L] = 2 * G[14, 4] + d[:elbow]   # [m] average tube length
+    sh[:L] = 2 * G[14, 4] + d.elbow   # [m] average tube length
     sh[:D_o_t] = G[4, 4]                # [m] outer diameter of tube
     sh[:D_i_t] = 2 * G[1, 4]            # [m] inner diameter of tube
     sh[:D_i_s] = 2 * G[19, 4]           # [m] inner shell diameter
@@ -166,6 +166,6 @@ function geometry(d)
     ph[:lane] = 0.096  # diametral lane distance (on tubesheet)
     ph[:K_D] = ph[:r_tube_i] / ph[:lane]
     ph[:Npass] = 1  # number of passes
-
+    
     return p, sh, rh, ev, ph, d
 end
